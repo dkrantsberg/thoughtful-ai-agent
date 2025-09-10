@@ -3,19 +3,19 @@
 ## Features
 
 - **Knowledge Base Search**: Retrieves relevant answers from a predefined dataset using fuzzy string matching
-- **LLM Fallback**: Uses OpenAI's GPT-4o-mini for questions not covered in the knowledge base
-- **Web-based Chat Interface**: Built with Gradio for easy interaction
+- **LLM Fallback**: Uses mlvoca TinyLlama LLM for questions not covered in the knowledge base
+- **Web-based Chat Interface**: Built with Gradio
 
 ## Tech Stack
 
 - **Python+**
 - **Gradio** - Web-based chat interface
-- **OpenAI API 1.0+** - LLM fallback for unknown questions
+- **Free LLM API - mlvoca.com** - LLM fallback for unknown questions
 
 ## Prerequisites
 
 - Python 3.9 or higher
-- OpenAI API key (optional, but recommended for full functionality)
+- mlvoca free LLM https://mlvoca.github.io/free-llm-api/ with TinyLlama model
 
 ## Installation
 
@@ -34,12 +34,6 @@
 3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables** (optional):
-   ```bash
-   # Create a .env file in the project root
-   echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
    ```
 
 ## Running the Application

@@ -1,14 +1,10 @@
 # app.py
 import os, json, difflib, gradio as gr
-from dotenv import load_dotenv
-
-load_dotenv()
 
 def load_knowledge_base():
     """Load knowledge base from JSON file"""
     with open('knowledge_base.json', 'r', encoding='utf-8') as f:
         kb_data = json.load(f)
-    # Convert to tuple format for compatibility with existing code
     return [(item['question'], item['answer']) for item in kb_data]
 
 KB = load_knowledge_base()
@@ -26,27 +22,20 @@ def kb_answer(query: str):
     return ans, score, best_q
 
 def llm_fallback(query: str) -> str:
-    key = os.getenv("OPENAI_API_KEY")
-    if not key:
-        return ("I don’t have a direct match in the knowledge base. "
-                "High level: Thoughtful AI builds automation agents for healthcare workflows "
-                "like eligibility verification (EVA), claims (CAM), and payment posting (PHIL). "
-                "What specifics do you need (pricing, integrations, security)?")
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=key)
-        r = client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0.3,
-            messages=[
-                {"role": "system", "content":
-                 "You are a concise support agent for Thoughtful AI. "
-                 "Prefer factual, generic guidance if KB is missing."},
-                {"role": "user", "content": query}
-            ]
-        )
-        print(r.choices[0].message.content.strip())
-        return r.choices[0].message.content.strip()
+        import requests
+        payload = {
+            "model": "tinyllama",
+            "prompt": query,
+            "stream": False
+        }
+        r = requests.post("https://mlvoca.com/api/generate", json=payload, timeout=20)
+        r.raise_for_status()
+        data = r.json()
+        text = data.get("response") or data.get("text") or data.get("output") or ""
+        if text:
+            return text.strip()
+        return "I couldn’t generate a response right now. Could you rephrase your question?"
     except Exception:
         return "LLM fallback is temporarily unavailable. Can you share more details?"
 
